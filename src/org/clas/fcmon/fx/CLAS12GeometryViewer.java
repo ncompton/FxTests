@@ -533,8 +533,9 @@ public class CLAS12GeometryViewer extends Application {
 				    	
 				    	}
 						
-						Prism2Dto3DMesh pixel = new Prism2Dto3DMesh(6, x, y, z);
-				        MeshView rect = new MeshView(pixel.getMesh());
+						//Prism2Dto3DMesh pixel = new Prism2Dto3DMesh(6, x, y, z);
+				        //MeshView rect = new MeshView(pixel.getMesh());
+				        MyMeshView rect = new MyMeshView(6, x, y, z);
 				        //String ECID = String.format("ECID%06d", u*10000 + v*100 + w);
 				        //rect.setId(ECID);
 				        //Tooltip t = new Tooltip(ECID);

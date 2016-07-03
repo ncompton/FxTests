@@ -10,6 +10,7 @@ public class Prism2Dto3DMesh extends TriangleMesh{
 	private float[] x;
 	private float[] y;
 	private float[] z;
+	public float length;
 
 	public Prism2Dto3DMesh() {
 		// TODO Auto-generated constructor stub
@@ -88,6 +89,11 @@ public class Prism2Dto3DMesh extends TriangleMesh{
 		x[numpoints-1] /= (float)n/2.0;
 		y[numpoints-1] /= (float)n/2.0;
 		z[numpoints-1] /= (float)n/2.0;
+		
+		float templength = (x[0] -x[numpoints-1]) * (x[0] -x[numpoints-1]);
+		templength += (y[0] -y[numpoints-1]) * (y[0] -y[numpoints-1]);
+		templength += (z[0] -z[numpoints-1]) * (z[0] -z[numpoints-1]);
+		this.length = (float) Math.sqrt(templength);
 	}
 	
 	public TriangleMesh getMesh()

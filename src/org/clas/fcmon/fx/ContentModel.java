@@ -231,6 +231,13 @@ public class ContentModel {
             mousePosY = event.getSceneY();
             mouseOldX = event.getSceneX();
             mouseOldY = event.getSceneY();
+            if(event.isPrimaryButtonDown()){
+            	PickResult res = event.getPickResult();
+            	if (res.getIntersectedNode() instanceof MyMeshView){
+            		System.out.println("Length: " + ((MyMeshView)res.getIntersectedNode()).getLength());
+            		System.out.println("Volume: " + ((MyMeshView)res.getIntersectedNode()).getVolume());
+            	}
+            }
             if(event.isSecondaryButtonDown()){
             	System.out.println("Button Clicked");
                 PickResult res = event.getPickResult();
