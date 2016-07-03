@@ -111,7 +111,7 @@ public class CLAS12GeometryViewer extends Application {
         
         //treePane.getChildren().add(treeView);
         
-        this.content = new ContentModel(200,200,200);
+        this.content = new ContentModel(600,600,200);
         this.content.setContent(root);
         
         
@@ -144,7 +144,7 @@ public class CLAS12GeometryViewer extends Application {
         
         statusPane.getChildren().add(colorPicker);
         this.mainBorderPane.setBottom(statusPane);
-        final Scene scene = new Scene(mainBorderPane, 250, 250, true);
+        final Scene scene = new Scene(mainBorderPane, 650, 650, true);
         
 
         
