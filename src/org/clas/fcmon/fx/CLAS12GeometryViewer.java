@@ -13,12 +13,9 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
-import static javafx.application.Application.launch;
+
+
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -63,12 +60,13 @@ public class CLAS12GeometryViewer extends Application {
     
     
     ContentModel  content      = null;
-    TreeView<String>  treeView = null;    
+    //TreeView<String>  treeView = null;    
     Map<String,MeshStore>  meshStores = new TreeMap<String,MeshStore>();    
     BorderPane   mainBorderPane = null;       
     Group root = null;
     
     List<Shape3D>  detectorHits = new ArrayList<Shape3D>();
+    
     
     @Override
     public void start(Stage stage) throws Exception {
@@ -103,17 +101,17 @@ public class CLAS12GeometryViewer extends Application {
         toolbar.getChildren().add(btnClearHits);
         
         
-        SplitPane  splitPane = new SplitPane();
-        StackPane  treePane  = new StackPane();
+        //SplitPane  splitPane = new SplitPane();
+        //StackPane  treePane  = new StackPane();
         
         root = new Group();
         BorderPane pane=new BorderPane();
                 
-        treeView = new TreeView<String>();
+        //treeView = new TreeView<String>();
         
-        treePane.getChildren().add(treeView);
+        //treePane.getChildren().add(treeView);
         
-        this.content = new ContentModel(800,800,200);
+        this.content = new ContentModel(200,200,200);
         this.content.setContent(root);
         
         
@@ -122,8 +120,8 @@ public class CLAS12GeometryViewer extends Application {
         
         pane.setCenter(content.getSubScene());
         mainBorderPane.setTop(toolbar);
-        splitPane.getItems().addAll(treePane,pane);
-        splitPane.setDividerPositions(0.2);
+        //splitPane.getItems().addAll(treePane,pane);
+        //splitPane.setDividerPositions(0.2);
 
         //this.addDetector("FTOF");
         //this.test();
@@ -132,13 +130,13 @@ public class CLAS12GeometryViewer extends Application {
         //this.testDC();
         //this.testBST();
         //final Scene scene = new Scene(pane, 880, 880, true);
-        this.mainBorderPane.setCenter(splitPane);
+        this.mainBorderPane.setCenter(pane);
+        //this.mainBorderPane.setCenter(treePane,pane);
         HBox statusPane = new HBox();
         
         ColorPicker colorPicker = new ColorPicker();
-        colorPicker.setOnAction(new EventHandler() {
-            @Override
-            public void handle(Event event) {
+        colorPicker.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {
                 content.setBackgroundColor(colorPicker.getValue());
             }            
         });
@@ -146,8 +144,9 @@ public class CLAS12GeometryViewer extends Application {
         
         statusPane.getChildren().add(colorPicker);
         this.mainBorderPane.setBottom(statusPane);
+        final Scene scene = new Scene(mainBorderPane, 250, 250, true);
         
-        final Scene scene = new Scene(mainBorderPane, 1280, 880, true);
+
         
         scene.setFill(Color.ALICEBLUE);
         stage.setTitle("CLAS12 Geometry Viewer - JavaFX3D");
@@ -357,10 +356,10 @@ public class CLAS12GeometryViewer extends Application {
 				        if(w%2 ==0) wcolor = 0;
 				        rect.setMaterial(new PhongMaterial(Color.rgb(ucolor,vcolor,wcolor,alpha)));
 				        //store.addMesh(Integer.toString(u*10000+v*100+w), rect,4);
-				        String PCALID = String.format("PCALID%06d", u*10000 + v*100 + w);
+				        //String PCALID = String.format("PCALID%06d", u*10000 + v*100 + w);
 				        //rect.setId(PCALID);
-				        Tooltip t = new Tooltip(PCALID);
-				        Tooltip.install(rect, t);
+				        //Tooltip t = new Tooltip(PCALID);
+				        //Tooltip.install(rect, t);
 				        this.root.getChildren().add(rect);
 				        /*
 				        for(Map.Entry<String,MeshView> item : store.getMap().entrySet()){
@@ -536,10 +535,10 @@ public class CLAS12GeometryViewer extends Application {
 						
 						Prism2Dto3DMesh pixel = new Prism2Dto3DMesh(6, x, y, z);
 				        MeshView rect = new MeshView(pixel.getMesh());
-				        String ECID = String.format("ECID%06d", u*10000 + v*100 + w);
+				        //String ECID = String.format("ECID%06d", u*10000 + v*100 + w);
 				        //rect.setId(ECID);
-				        Tooltip t = new Tooltip(ECID);
-				        Tooltip.install(rect, t);
+				        //Tooltip t = new Tooltip(ECID);
+				        //Tooltip.install(rect, t);
 				        double alpha = 1.0;
 				        int ucolor = 255, vcolor = 255, wcolor = 255;
 				        if(u%2 ==0)
@@ -643,8 +642,8 @@ public class CLAS12GeometryViewer extends Application {
         
         TreeItem<String>  clasROOT = new TreeItem<String>("CLAS12");
         
-        this.treeView.setEditable(true);
-        this.treeView.setCellFactory(CheckBoxTreeCell.<String>forTreeView());
+        //this.treeView.setEditable(true);
+        //this.treeView.setCellFactory(CheckBoxTreeCell.<String>forTreeView());
         for(int sector = 1; sector <=6 ; sector++){
             MeshStore  store = GeometryLoader.getGeometry("FTOF",sector,1);
             store.setMaterial(0.6, 0.2, 0.2, 0.4);
@@ -681,7 +680,7 @@ public class CLAS12GeometryViewer extends Application {
             }
         }
         
-        this.treeView.setRoot(clasROOT);
+        //this.treeView.setRoot(clasROOT);
         
     }
     

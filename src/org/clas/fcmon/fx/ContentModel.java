@@ -1,13 +1,19 @@
 package org.clas.fcmon.fx;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Side;
 import javafx.scene.AmbientLight;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.SubScene;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -48,6 +54,8 @@ public class ContentModel {
 	PhongMaterial oldmaterial = new PhongMaterial();
     private final double modifierFactor = 0.3;
     
+    
+    
     public ContentModel(double paneW, double paneH, double dimModel) {
         this.paneW=paneW;
         this.paneH=paneH;
@@ -67,7 +75,8 @@ public class ContentModel {
                                       cameraLookXRotate,cameraLookZRotate);
         cameraXform.getChildren().add(cameraXform2);
         cameraXform2.getChildren().add(camera);
-        cameraPosition.setZ(-2d*dimModel*4);
+        cameraPosition.setZ(-2f*dimModel);
+        cameraPosition.setY(-dimModel);
         root3D.getChildren().add(cameraXform);
         /*
         Rotate camera to show isometric view X right, Y top, Z 120º left-down from each
@@ -94,7 +103,7 @@ public class ContentModel {
         
         Three: setting first RX rotation, then RY:        
         */
-        cameraXform.setRx(-30.0);
+        cameraXform.setRx(-10.0);
         cameraXform.setRy(180);
 
     }
@@ -113,30 +122,49 @@ public class ContentModel {
     }
     
     private void buildFloor(){
-        float xlength = 1600.0f;
-        float zlength = 800.0f;
+        float xlength = (float) (2.0 * this.paneW);
+        float margin = (float) (xlength * 0.05);
+        float xbowwidth = (float) ((xlength - margin)/19.0);
+        int numxwidths = (int) ((2.0 * 900.0)/xbowwidth);
+        float zlength = (float) (numxwidths * xbowwidth);
+        //float zmargin = (float) (zlength * 0.05);
+        //float zgriddist = (float) ((xlength - margin)/2.0 + (zlength/2.0);
         Box floorBox = new Box(xlength,0.1,zlength);
         final PhongMaterial redMaterial = new PhongMaterial();
         redMaterial.setDiffuseColor(new Color(0.4,0.4,0.4,1.0));
         redMaterial.setSpecularColor(new Color(0.4,0.4,0.4,1.0));
         floorBox.setMaterial(redMaterial);
         
-        for(int i = 0; i < 20; i++){
-            Box xLine = new Box(xlength - 80, 1.0, 1.0);
-            double ytranslate = -760 + i * 80;
+//        for(int i = 0; i < 20; i++){
+//            Box xLine = new Box(xlength - margin, 1.0, 1.0);
+//            double ytranslate = -(xlength - margin)/2.0 + i * (xlength - margin)/19.0;
+//            xLine.setTranslateZ(ytranslate);
+//            xLine.setMaterial(redMaterial);
+//            autoScalingGroup.getChildren().add(xLine);
+//        }
+        
+        double ytranslate = -(xlength - margin)/2.0;
+        int i = 0;
+        while(i <= numxwidths)
+        {
+        	Box xLine = new Box(xlength - margin, 1.0, 1.0);
+            ytranslate = -(xlength - margin)/2.0 + i * xbowwidth;
             xLine.setTranslateZ(ytranslate);
             xLine.setMaterial(redMaterial);
             autoScalingGroup.getChildren().add(xLine);
+            ++i;
         }
         
-        for(int i = 0; i < 20; i++){
-            Box xLine = new Box(1.0, 1.0,xlength-80);
-            double ytranslate = -760 + i * 80;
+        for(i = 0; i < 20; i++){
+            Box xLine = new Box(1.0, 1.0,zlength);
+            ytranslate = -(xlength - margin)/2.0 + i * xbowwidth;
             xLine.setTranslateX(ytranslate);
+            xLine.setTranslateZ(-(xlength - margin)/2.0 + zlength/2.0);
             xLine.setMaterial(redMaterial);
             autoScalingGroup.getChildren().add(xLine);
         }
     }
+    
     
     private void buildAxes() {
         double length = 2d*dimModel;
@@ -165,7 +193,7 @@ public class ContentModel {
         
         Box xAxis = new Box(length, width, width);
         Box yAxis = new Box(width, length, width);
-        Box zAxis = new Box(width, width, length*4);
+        Box zAxis = new Box(width, width, length);
         xAxis.setMaterial(redMaterial);
         yAxis.setMaterial(greenMaterial);
         zAxis.setMaterial(blueMaterial);
@@ -203,6 +231,28 @@ public class ContentModel {
             mousePosY = event.getSceneY();
             mouseOldX = event.getSceneX();
             mouseOldY = event.getSceneY();
+            if(event.isSecondaryButtonDown()){
+            	System.out.println("Button Clicked");
+                PickResult res = event.getPickResult();
+                if (res.getIntersectedNode() != null){
+                	System.out.println("Node Selected");
+                	ContextMenu contextMenu = new ContextMenu();
+                	MenuItem cut = new MenuItem("Cut");
+                	MenuItem copy = new MenuItem("Copy");
+                	MenuItem paste = new MenuItem("Paste");
+
+                	contextMenu.getItems().addAll(cut, copy, paste);
+                	contextMenu.show(res.getIntersectedNode(), event.getScreenX(), event.getScreenY());
+                	
+                	
+                	cut.setOnAction(new EventHandler<ActionEvent>() {
+                	    public void handle(ActionEvent e) {
+                	        System.out.println("Cut...");
+                	    }
+                	}); 	
+               
+                }
+            }
         } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
             double modifier = event.isControlDown()?0.1:event.isShiftDown()?3.0:1.0;
 
@@ -214,12 +264,12 @@ public class ContentModel {
             mouseDeltaY = (mousePosY - mouseOldY);
 
             if(event.isMiddleButtonDown() || (event.isPrimaryButtonDown() && event.isSecondaryButtonDown())) {
-                cameraXform2.setTx(cameraXform2.t.getX() + xFlip*mouseDeltaX*modifierFactor*modifier*0.3); 
-                cameraXform2.setTy(cameraXform2.t.getY() + yFlip*mouseDeltaY*modifierFactor*modifier*0.3);
+                cameraXform2.setTx(cameraXform2.t.getX() + xFlip*mouseDeltaX*modifierFactor*modifier*1.2); 
+                cameraXform2.setTy(cameraXform2.t.getY() + yFlip*mouseDeltaY*modifierFactor*modifier*1.2);
             }
             else if(event.isPrimaryButtonDown()) {
-                cameraXform.setRy(cameraXform.ry.getAngle() - yFlip*mouseDeltaX*modifierFactor*modifier*2.0);
-                cameraXform.setRx(cameraXform.rx.getAngle() + xFlip*mouseDeltaY*modifierFactor*modifier*2.0);
+                cameraXform.setRy(cameraXform.ry.getAngle() - yFlip*mouseDeltaX*modifierFactor*modifier*1.2);
+                cameraXform.setRx(cameraXform.rx.getAngle() + xFlip*mouseDeltaY*modifierFactor*modifier*1.2);
             }
             else if(event.isSecondaryButtonDown()) {
                 double z = cameraPosition.getZ();
@@ -244,7 +294,7 @@ public class ContentModel {
         if (!Double.isNaN(event.getZoomFactor()) && event.getZoomFactor() > 0.8 && event.getZoomFactor() < 1.2) {
             double z = cameraPosition.getZ()/event.getZoomFactor();
             z = Math.max(z,-10d*dimModel);
-            z = Math.min(z,0);
+            z = Math.min(z,10d*dimModel);
             cameraPosition.setZ(z);
         }
     };
